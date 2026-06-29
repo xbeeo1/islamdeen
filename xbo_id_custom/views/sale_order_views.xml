@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Custom Fields" name="custom_field">
+                        <group>
+                            <group>
+                                <field name="employee_id" />
+                            </group>
+                        </group>
+                    </page>
+
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sale_order_view_search_inherit" model="ir.ui.view">
+            <field name="name">sale.order.search.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='activity_type_id']" position="after">
+                    <field name="employee_id"/>
+                </xpath>
+                <xpath expr="//search/filter[@name='late_availability']" position="after">
+                    <filter name="employee_id" string="Employee" domain="[('employee_id', '!=', False)]"/>
+                </xpath>
+
+                <xpath expr="//search/group/filter[@name='preferred_payment_method_line_groupby']" position="after">
+                    <filter name="employee_id" string="Employee" context="{'group_by': 'employee_id'}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

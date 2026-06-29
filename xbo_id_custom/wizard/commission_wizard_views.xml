@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="commission_window_act_wizard_form_view" model="ir.ui.view">
+            <field name="name">commission.wizard.form</field>
+            <field name="model">commission.wizard</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="month"/>
+                            </group>
+                            <group>
+                                <field name="commission_type"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="company_id"  options="{'no_quick_create': True, 'no_create_edit': True,'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="department_id" required="commission_type == 'department'" invisible="commission_type != 'department'" options="{'no_quick_create': True, 'no_create_edit': True,'no_open': True, 'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="product_categ_id" required="commission_type == 'product_categ'" invisible="commission_type != 'product_categ'" options="{'no_quick_create': True, 'no_create_edit': True,'no_open': True, 'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="employee_ids" invisible="commission_type != 'product_categ'" options="{'no_quick_create': True, 'no_create_edit': True,'no_open': True, 'no_create': True}" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Print" name="action_confirm" type="object" class="oe_highlight" data-hotkey="q"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel" data-hotkey="x"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="commission_window_act" model="ir.actions.act_window">
+            <field name="name">Commission</field>
+            <field name="res_model">commission.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="commission_window_act_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_commission"
+              name="Commission"
+              action="commission_window_act"
+              parent="account.menu_finance"
+              sequence="5"/>
+
+
+
+    </data>
+
+</odoo>

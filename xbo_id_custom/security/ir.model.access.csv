@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fund_transfer,fund.transfer,model_fund_transfer,base.group_user,1,1,1,1
+access_commission_wizard,commission.wizard,model_commission_wizard,base.group_user,1,1,1,1
+access_branch_commission,branch.commission,model_branch_commission,base.group_user,1,1,1,1
+access_branch_commission_line,branch.commission.line,model_branch_commission_line,base.group_user,1,1,1,1
+access_department_commission,department.commission,model_department_commission,base.group_user,1,1,1,1
+access_department_commission_line,department.commission.line,model_department_commission_line,base.group_user,1,1,1,1

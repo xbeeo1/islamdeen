@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_inherit" model="ir.ui.view" >
+        <field name="name">account.invoice.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//notebook/page[last()]" position="after">
+                <page string="Custom Fields" name="custom_field">
+                    <group>
+                        <group invisible="move_type != 'out_invoice'">
+                            <field name="employee_id" />
+                        </group>
+                    </group>
+                </page>
+
+            </xpath>
+        </field>
+
+    </record>
+
+    <record id="view_account_invoice_filter_inherit" model="ir.ui.view">
+        <field name="name">account.move.search.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='journal_id']" position="after">
+                <field name="employee_id"/>
+            </xpath>
+            <xpath expr="//search/filter[@name='cancel']" position="after">
+                <filter name="employee_id" string="Employee" domain="[('employee_id', '!=', False)]"/>
+            </xpath>
+
+            <xpath expr="//search/group/filter[@name='groupy_by_journal']" position="after">
+                <filter name="employee_id" string="Employee" context="{'group_by': 'employee_id'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
