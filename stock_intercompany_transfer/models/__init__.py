@@ -22,3 +22,4 @@
 #############################################################################
 from . import res_company
 from . import stock_picking
+from . import stock_transfer_account

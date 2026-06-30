@@ -38,27 +38,93 @@ class StockPickingInherit(models.Model):
                                                         ' Button Clicked')
 
     def button_validate(self):
-        """Creating the internal transfer if it is not created
-        from another picking"""
+        # Configuration Validation
+        for picking in self:
+            account_config = self.env['stock.transfer.account'].search([
+                ('company_id', '=', picking.company_id.id)
+            ], limit=1)
+            in_company_id = self.env['res.company'].sudo().search(
+                [('partner_id', '=', self.partner_id.id)], limit=1)
+
+            if not account_config and in_company_id:
+                raise UserError(_(
+                    "Please configure Stock Transfer Accounts for company '%s' before validating this transfer."
+                ) % picking.company_id.name)
+
+        # Validate Picking First
+        result = super(StockPickingInherit, self).button_validate()
+
+        # Existing Intercompany Logic
         active_move = []
         greater_quantity = []
+
         for move in self.move_ids:
             if move.quantity != 0.0:
-                if (move.quantity < move.product_uom_qty or
-                        move.quantity > move.product_uom_qty):
+                if move.quantity != move.product_uom_qty:
                     active_move.append(move.id)
+
             if move.quantity > move.product_uom_qty:
                 greater_quantity.append(move.id)
-        if len(greater_quantity) == self.move_ids.search_count([(
-                'picking_id', '=', self.id)]):
+
+        if len(greater_quantity) == self.move_ids.search_count([
+            ('picking_id', '=', self.id)
+        ]):
             if not self.auto_generated:
                 self.create_intercompany_transfer()
-        if not self.move_ids.search(
-                [('picking_id', '=', self.id), ('quantity', '=', 0.0)]):
+
+        if not self.move_ids.search([
+            ('picking_id', '=', self.id),
+            ('quantity', '=', 0.0)
+        ]):
             if not active_move:
                 if not self.auto_generated:
                     self.create_intercompany_transfer()
-        return super(StockPickingInherit, self).button_validate()
+
+        # Create Journal Entry After Successful Validation
+        if account_config and in_company_id:
+            for picking in self:
+                account_config = self.env['stock.transfer.account'].search([
+                    ('company_id', '=', picking.company_id.id)
+                ], limit=1)
+
+                misc_journal = self.env['account.journal'].search([
+                    ('name', '=', 'Inter Branch Stock Transfer')
+                ], limit=1)
+
+                if not misc_journal:
+                    raise UserError(_("Please configure 'Inter Branch Stock Transfer' journal."))
+
+                lines = []
+
+                for line in picking.move_ids:
+                    amount = line.product_id.standard_price * line.quantity
+
+                    lines.append((0, 0, {
+                        'account_id': account_config.account_debit.id,
+                        'debit': amount,
+                        'credit': 0.0,
+                        'name': picking.name,
+                        'partner_id': picking.partner_id.id,
+                    }))
+
+                    lines.append((0, 0, {
+                        'account_id': account_config.account_credit.id,
+                        'debit': 0.0,
+                        'credit': amount,
+                        'name': picking.name,
+                        'partner_id': picking.partner_id.id,
+                    }))
+
+                if lines:
+                    move_obj = self.env['account.move'].create({
+                        'ref': picking.name,
+                        'journal_id': misc_journal.id,
+                        'move_type': 'entry',
+                        'line_ids': lines,
+                    })
+                    move_obj.action_post()
+
+        return result
 
     def create_intercompany_transfer(self):
         """Creating the transfer if the selected company is enabled the

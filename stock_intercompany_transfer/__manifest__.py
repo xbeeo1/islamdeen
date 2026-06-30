@@ -36,7 +36,10 @@
     'website': "https://www.cybrosys.com",
     'depends': ['stock', 'account'],
     'data': [
+        'security/ir.model.access.csv',
+        'security/security_rule.xml',
         'views/res_company_views.xml',
+        'views/stock_transfer_account_views.xml',
     ],
     'images': ['static/description/banner.jpg'],
     'license': 'AGPL-3',

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_stock_transfer_account_list" model="ir.ui.view">
+            <field name="name">stock.transfer.account.list</field>
+            <field name="model">stock.transfer.account</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="account_debit"/>
+                    <field name="account_credit"/>
+                    <field name="company_id"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form view -->
+        <record id="view_stock_transfer_account_form" model="ir.ui.view">
+            <field name="name">stock.transfer.account.form</field>
+            <field name="model">stock.transfer.account</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="account_debit"/>
+                                <field name="company_id"/>
+                            </group>
+                            <group>
+                                <field name="account_credit"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_stock_transfer_account" model="ir.actions.act_window">
+            <field name="name">Stock Transfer Account</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.transfer.account</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create Your First Stock Transfer Account...!
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_stock_transfer_account"
+                  name="Stock Transfer Account"
+                  parent="account.menu_finance_configuration"
+                  action="action_stock_transfer_account"
+                  sequence="3"/>
+
+
+
+    </data>
+</odoo>
