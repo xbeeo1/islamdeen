@@ -9,9 +9,9 @@
 
 
             <xpath expr="//notebook/page[last()]" position="after">
-                <page string="Custom Fields" name="custom_field">
+                <page string="Custom Fields" name="custom_field" invisible="move_type != 'out_invoice'">
                     <group>
-                        <group invisible="move_type != 'out_invoice'">
+                        <group >
                             <field name="employee_id" />
                         </group>
                     </group>

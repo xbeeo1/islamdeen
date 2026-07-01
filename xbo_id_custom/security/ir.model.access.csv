@@ -5,3 +5,4 @@ access_branch_commission,branch.commission,model_branch_commission,base.group_us
 access_branch_commission_line,branch.commission.line,model_branch_commission_line,base.group_user,1,1,1,1
 access_department_commission,department.commission,model_department_commission,base.group_user,1,1,1,1
 access_department_commission_line,department.commission.line,model_department_commission_line,base.group_user,1,1,1,1
+

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy.engine import default
+
 
 from odoo import fields, models
 from odoo.exceptions import ValidationError

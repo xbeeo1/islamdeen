@@ -31,19 +31,19 @@ class FundTransfer(models.TransientModel):
         lines2 = []
         partner_obj_1 = self.env['res.partner'].search([('name','=',self.current_company_id.name)],limit=1)
         partner_obj_2 = self.env['res.partner'].search([('name','=',self.company_id.name)],limit=1)
-        account_obj_1 = self.env['account.account'].search([('name','=','Inter-Company Fund Transfer'),('company_ids','in',self.current_company_id.id)],limit=1)
-        account_obj_2 = self.env['account.account'].search([('name','=','Inter-Company Fund Transfer'),('company_ids','in',self.company_id.id)],limit=1)
+        account_obj_1 = self.env['account.account'].search([('name','=','Inter-Branch Fund Transfer')],limit=1)
+        # account_obj_2 = self.env['account.account'].search([('name','=','Inter-Company Fund Transfer'),('company_ids','in',self.company_id.id)],limit=1)
         if not account_obj_1:
             raise ValidationError(
-                _("The account 'Inter-Company Fund Transfer' is not configured for company '%s'. Please create this account and try again.")
+                _("The account 'Inter-Branch Fund Transfer' is not configured for company '%s'. Please create this account and try again.")
                 % self.current_company_id.name
             )
 
-        if not account_obj_2:
-            raise ValidationError(
-                _("The account 'Inter-Company Fund Transfer' is not configured for company '%s'. Please create this account and try again.")
-                % self.company_id.name
-            )
+        # if not account_obj_2:
+        #     raise ValidationError(
+        #         _("The account 'Inter-Company Fund Transfer' is not configured for company '%s'. Please create this account and try again.")
+        #         % self.company_id.name
+        #     )
 
         lines1.append((0, 0, {
             'account_id': account_obj_1.id,
@@ -67,6 +67,7 @@ class FundTransfer(models.TransientModel):
                 'line_ids': lines1,
                 'company_id':self.current_company_id.id,
             })
+            move_obj.action_post()
         # second Company entry
         lines2.append((0, 0, {
             'account_id': self.receiver_account_id.default_account_id.id,
@@ -76,7 +77,7 @@ class FundTransfer(models.TransientModel):
             'partner_id': partner_obj_1.id,
         }))
         lines2.append((0, 0, {
-            'account_id': account_obj_2.id,
+            'account_id': account_obj_1.id,
             'debit': 0.0,
             'credit': self.amount,
             'name': self.description,
@@ -90,6 +91,7 @@ class FundTransfer(models.TransientModel):
                 'line_ids': lines2,
                 'company_id': self.company_id.id,
             })
+            move_obj.action_post()
 
 
 
